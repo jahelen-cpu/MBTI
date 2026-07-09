@@ -149,6 +149,24 @@ const TYPE_CAREERS_ = {
   ESTP: ['경찰관', '소방관', '군장교', '펀드매니저', '은행원', '기자', '여행가이드', '건축엔지니어'],
   ESFP: ['코미디언', '의상디자이너', '일러스트레이터', '애니메이터', '여행상품기획자', '놀이치료사'],
 };
+const TYPE_DESC_ = {
+  INTJ: '창의적이고 독립적이며, 장기적 계획을 세우고 효율적으로 목표를 달성하려는 전략적 성격입니다.',
+  INTP: '이론적이고 분석적이며, 지적 호기심이 강하고 독립적으로 복잡한 문제를 탐구하는 성격입니다.',
+  ENTJ: '지도력 있고 결단력 있으며, 효율적인 체계를 구축하고 목표 달성을 위해 주도적으로 행동하는 성격입니다.',
+  ENTP: '논쟁적이고 혁신적이며, 도전 과제를 분석하고 다양한 관점에서 문제를 해결하려는 성격입니다.',
+  INFJ: '이상과 의미를 추구하며 타인의 성장을 돕고자 하고, 깊은 통찰력과 확신 있는 신념을 가진 성격입니다.',
+  INFP: '이상주의적이고 개인의 신념을 따르며, 타인을 진심으로 돕고 창의적 표현을 추구하는 성격입니다.',
+  ENFJ: '리더십 있고 영감을 주며, 타인의 성장을 도모하고 공동의 목표를 위해 헌신하는 성격입니다.',
+  ENFP: '열정적이고 창의적이며, 가능성을 탐색하고 사람들을 독려하며 새로운 경험을 추구하는 성격입니다.',
+  ISTJ: '책임감 있고 신뢰할 수 있으며, 전통과 규칙을 중시하고 체계적으로 일을 처리하는 성격입니다.',
+  ISFJ: '따뜻하고 배려심 깊으며, 타인의 필요를 먼저 챙기고 조화로운 관계를 중요시하는 성격입니다.',
+  ESTJ: '조직적이고 리더십 있으며, 질서를 유지하고 효율적으로 목표를 달성하려는 책임감 있는 성격입니다.',
+  ESFJ: '따뜻하고 사교적이며, 타인의 필요를 챙기고 화합을 추구하는 배려심 깊은 성격입니다.',
+  ISTP: '현실적이고 논리적이며, 문제를 실질적으로 분석하고 즉흥적으로 대응하는 실용주의 성격입니다.',
+  ISFP: '온화하고 친절하며, 자신의 가치관을 소중히 여기고 현재의 순간을 즐기는 감성적 성격입니다.',
+  ESTP: '대담하고 현실적이며, 즉각적인 행동을 선호하고 변화와 도전을 즐기는 활동적 성격입니다.',
+  ESFP: '외향적이고 친근하며, 타인과 즐거움을 나누고 현재 순간을 충분히 즐기는 명랑한 성격입니다.',
+};
 
 function countsFor_(rows, filterFn) {
   const counts = {};
@@ -236,21 +254,25 @@ function addCareerSlides_(deck, label, scopeRows) {
       box.getBorder().setTransparent();
 
       const title = `${TYPE_EMOJI_[item.t]} ${item.t} · ${TYPE_NICK_[item.t]}`;
+      const desc = TYPE_DESC_[item.t] || '';
       const jobs = (TYPE_CAREERS_[item.t] || []).join(' · ');
       const names = scopeRows.filter(r => r.mbti === item.t).map(r => r.name);
       const namesText = names.length ? names.join(', ') : '(제출자 없음)';
-      const text = `${title}\n${jobs}\n${namesText}`;
+      const text = `${title}\n${desc}\n${jobs}\n${namesText}`;
 
       const l2Start = title.length + 1;
-      const l2End = l2Start + jobs.length;
+      const l2End = l2Start + desc.length;
       const l3Start = l2End + 1;
+      const l3End = l3Start + jobs.length;
+      const l4Start = l3End + 1;
 
       const tb = slide.insertTextBox(text, x + 10, y + 8, boxW - 20, boxH - 16);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
-      range.getRange(0, title.length).getTextStyle().setFontSize(18).setBold(true);
-      range.getRange(l2Start, l2End).getTextStyle().setFontSize(11).setBold(false);
-      range.getRange(l3Start, text.length).getTextStyle().setFontSize(16).setBold(true);
+      range.getRange(0, title.length).getTextStyle().setFontSize(16).setBold(true);
+      range.getRange(l2Start, l2End).getTextStyle().setFontSize(10).setBold(false);
+      range.getRange(l3Start, l3End).getTextStyle().setFontSize(9).setBold(false);
+      range.getRange(l4Start, text.length).getTextStyle().setFontSize(14).setBold(true);
     });
   });
 }
