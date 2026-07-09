@@ -215,8 +215,8 @@ function addSummarySlide_(deck, label, scopeRows) {
       const tb = slide.insertTextBox(text, x + 3, y + 2, boxW - 6, boxH - 4);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF').setBold(true);
-      range.getRange(0, title.length).getTextStyle().setFontSize(9);
-      range.getRange(title.length + 1, text.length).getTextStyle().setFontSize(7).setBold(false);
+      range.getRange(0, title.length).getTextStyle().setFontSize(14);
+      range.getRange(title.length + 1, text.length).getTextStyle().setFontSize(11).setBold(false);
       range.getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.CENTER);
     });
   });
@@ -269,24 +269,26 @@ function addCareerSlides_(deck, label, scopeRows) {
       const tb = slide.insertTextBox(text, x + 10, y + 8, boxW - 20, boxH - 16);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
-      range.getRange(0, title.length).getTextStyle().setFontSize(16).setBold(true);
-      range.getRange(l2Start, l2End).getTextStyle().setFontSize(10).setBold(false);
-      range.getRange(l3Start, l3End).getTextStyle().setFontSize(9).setBold(false);
-      range.getRange(l4Start, text.length).getTextStyle().setFontSize(14).setBold(true);
+      range.getRange(0, title.length).getTextStyle().setFontSize(24).setBold(true);
+      range.getRange(l2Start, l2End).getTextStyle().setFontSize(15).setBold(false);
+      range.getRange(l3Start, l3End).getTextStyle().setFontSize(14).setBold(false);
+      range.getRange(l4Start, text.length).getTextStyle().setFontSize(21).setBold(true);
     });
   });
 }
 
 function createSlidesDeck_(rows, classFilter) {
   const deck = SlidesApp.create('MBTI 조사 결과 - ' + Utilities.formatDate(new Date(), 'GMT+9', 'yyyy.MM.dd'));
+  const pw = deck.getPageWidth();
+  const textW = pw - 80;
   const titleSlide = deck.getSlides()[0];
   titleSlide.getShapes().forEach(sh => { try { sh.remove(); } catch (err) {} });
   const titleText = (classFilter && classFilter !== 'all') ? `🧭 우리 ${classFilter}반 MBTI 조사 결과` : '🧭 우리 반 MBTI 조사 결과 (전체 학급)';
-  titleSlide.insertTextBox(titleText, 40, 150, 880, 70)
+  titleSlide.insertTextBox(titleText, 40, 150, textW, 70)
     .getText().getTextStyle().setFontSize(36).setBold(true);
-  titleSlide.insertTextBox(`총 ${rows.length}명 응답`, 40, 230, 880, 40)
+  titleSlide.insertTextBox(`총 ${rows.length}명 응답`, 40, 230, textW, 40)
     .getText().getTextStyle().setFontSize(18).setForegroundColor('#5A705A');
-  titleSlide.insertTextBox('⚠️ MBTI는 성격을 이해하는 참고 자료일 뿐, 사람을 규정짓는 절대적인 기준이 아닙니다. 검사 시점과 상황에 따라 얼마든지 변할 수 있어요.', 40, 300, 880, 90)
+  titleSlide.insertTextBox('⚠️ MBTI는 성격을 이해하는 참고 자료일 뿐, 사람을 규정짓는 절대적인 기준이 아닙니다. 검사 시점과 상황에 따라 얼마든지 변할 수 있어요.', 40, 300, textW, 90)
     .getText().getTextStyle().setFontSize(14).setBold(true).setForegroundColor('#8A6D00');
 
   if (!classFilter || classFilter === 'all') {

@@ -547,18 +547,47 @@ function renderMissingStudents() {
         `;
     }
 
+    if (filter !== 'all') {
+        return `
+            <div class="group-section">
+                <div class="group-title" style="color:#C0392B">
+                    <span class="group-dot" style="background:#C0392B"></span>
+                    미제출 학생 (${missing.length}명)
+                </div>
+                <ul class="student-list">
+                    ${missing
+                        .sort((a, b) => String(a.studentId).localeCompare(String(b.studentId)))
+                        .map(s => `<li><span class="sid">${esc(s.studentId)}</span><span>${esc(s.name)}</span></li>`)
+                        .join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    const byClass = {};
+    missing.forEach(s => {
+        if (!byClass[s.classNum]) byClass[s.classNum] = [];
+        byClass[s.classNum].push(s);
+    });
+    const classNums = Object.keys(byClass).sort((a, b) => a.localeCompare(b));
+
     return `
         <div class="group-section">
             <div class="group-title" style="color:#C0392B">
                 <span class="group-dot" style="background:#C0392B"></span>
                 미제출 학생 (${missing.length}명)
             </div>
-            <ul class="student-list">
-                ${missing
-                    .sort((a, b) => String(a.classNum).localeCompare(String(b.classNum)) || String(a.studentId).localeCompare(String(b.studentId)))
-                    .map(s => `<li><span class="sid">${filter === 'all' ? esc(s.classNum) + '반 ' : ''}${esc(s.studentId)}</span><span>${esc(s.name)}</span></li>`)
-                    .join('')}
-            </ul>
+            ${classNums.map(c => `
+                <div style="margin-bottom:10px;">
+                    <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;">${esc(c)}반 (${byClass[c].length}명)</div>
+                    <ul class="student-list">
+                        ${byClass[c]
+                            .sort((a, b) => String(a.studentId).localeCompare(String(b.studentId)))
+                            .map(s => `<li><span class="sid">${esc(s.studentId)}</span><span>${esc(s.name)}</span></li>`)
+                            .join('')}
+                    </ul>
+                </div>
+            `).join('')}
         </div>
     `;
 }
