@@ -138,6 +138,7 @@
         transition: transform 0.1s;
     }
     .type-pick:active { transform: scale(0.96); }
+    .type-pick .nick { display: block; font-size: 10px; font-weight: 600; margin-top: 3px; opacity: 0.8; }
     .type-pick.sel { color: white; border-color: transparent; }
     .type-pick.sel[data-g="NT"] { background: var(--nt); }
     .type-pick.sel[data-g="NF"] { background: var(--nf); }
@@ -376,22 +377,22 @@ const MBTI_GROUPS = [
 ];
 
 const MBTI_INFO = {
-    INTJ: { nick: '전략가', desc: '독립적이고 분석적이며, 장기적인 계획을 세우고 체계적으로 목표를 달성해 나가는 것을 좋아합니다.', careers: ['연구원', '엔지니어', '전략기획', '프로그래머'] },
-    INTP: { nick: '논리술사', desc: '호기심이 많고 논리적인 사고를 즐기며, 새로운 개념과 원리를 깊이 파고드는 것을 좋아합니다.', careers: ['연구원', '수학자', '소프트웨어 개발자', '데이터 분석가'] },
-    ENTJ: { nick: '통솔자', desc: '리더십이 강하고 목표 지향적이며, 사람들을 이끌고 조직을 효율적으로 운영하는 데 능합니다.', careers: ['경영자', '변호사', '컨설턴트', '프로젝트 매니저'] },
-    ENTP: { nick: '변론가', desc: '창의적이고 도전적인 아이디어를 즐기며, 토론과 새로운 시도를 통해 배우는 것을 좋아합니다.', careers: ['기업가', '발명가', '저널리스트', '마케터'] },
-    INFJ: { nick: '옹호자', desc: '통찰력이 있고 이상주의적이며, 타인을 돕고 의미 있는 목표를 추구하는 데 관심이 많습니다.', careers: ['상담가', '심리학자', '작가', '교사'] },
-    INFP: { nick: '중재자', desc: '감성이 풍부하고 자신의 가치관을 소중히 여기며, 창의적인 방식으로 생각을 표현하는 것을 좋아합니다.', careers: ['작가', '디자이너', '상담사', '사회복지사'] },
-    ENFJ: { nick: '선도자', desc: '따뜻하고 카리스마가 있으며, 사람들을 이끌고 성장을 돕는 데서 보람을 느낍니다.', careers: ['교사', '코치', '홍보 전문가', '인사담당자'] },
-    ENFP: { nick: '활동가', desc: '열정적이고 사교적이며, 새로운 사람과 가능성을 탐구하는 것을 즐깁니다.', careers: ['배우', '광고기획자', '이벤트 플래너', '상담가'] },
-    ISTJ: { nick: '현실주의자', desc: '책임감이 강하고 체계적이며, 원칙과 절차를 중시하며 꾸준히 맡은 일을 해냅니다.', careers: ['회계사', '공무원', '관리자', '엔지니어'] },
-    ISFJ: { nick: '수호자', desc: '헌신적이고 배려심이 많으며, 주변 사람들을 세심하게 챙기고 안정을 추구합니다.', careers: ['간호사', '교사', '사회복지사', '행정직'] },
-    ESTJ: { nick: '경영자', desc: '실용적이고 조직적이며, 규율과 효율을 중시하고 계획을 실행에 옮기는 데 능합니다.', careers: ['관리자', '경찰', '군인', '사업가'] },
-    ESFJ: { nick: '집정관', desc: '협조적이고 친화적이며, 공동체와 인간관계를 소중히 여기고 적극적으로 돕습니다.', careers: ['교사', '간호사', '이벤트 매니저', '영업직'] },
-    ISTP: { nick: '장인', desc: '실용적이고 손재주가 좋으며, 조용히 관찰하다가 문제가 생기면 즉각적으로 해결합니다.', careers: ['엔지니어', '정비사', '파일럿', '응급구조사'] },
-    ISFP: { nick: '모험가', desc: '온화하고 예술적 감각이 뛰어나며, 자신만의 방식으로 세상을 조용히 탐색합니다.', careers: ['디자이너', '사진작가', '수의사', '요리사'] },
-    ESTP: { nick: '사업가', desc: '활동적이고 현실적이며, 순발력이 뛰어나 즉흥적인 상황에도 잘 대응합니다.', careers: ['사업가', '영업직', '운동선수', '응급구조사'] },
-    ESFP: { nick: '연예인', desc: '활발하고 사교적이며, 주변 사람들과 즐거운 분위기를 만드는 것을 좋아합니다.', careers: ['배우', '이벤트 기획자', '여행가이드', '판매직'] },
+    INTJ: { nick: '전략가', desc: '독립적이고 분석적이며, 장기적인 계획을 세우고 체계적으로 목표를 달성해 나가는 것을 좋아합니다.', careers: ['분석가', '회계사', '인류학자', '파일럿', '경영 컨설턴트', '제약회사 연구원', '웹 개발자', '최고 재무 책임자'] },
+    INTP: { nick: '논리술사', desc: '호기심이 많고 논리적인 사고를 즐기며, 새로운 개념과 원리를 깊이 파고드는 것을 좋아합니다.', careers: ['경제학자', '심리학자', '경찰', '프로그래머', '천문학자', '비평가', '아트디렉터', '연구원'] },
+    ENTJ: { nick: '통솔자', desc: '리더십이 강하고 목표 지향적이며, 사람들을 이끌고 조직을 효율적으로 운영하는 데 능합니다.', careers: ['경영 컨설턴트', '공인중개사', '관리자', '변호사', '재무 상담사', '경제 분석가', '벤처 투자가', '판사'] },
+    ENTP: { nick: '변론가', desc: '창의적이고 도전적인 아이디어를 즐기며, 토론과 새로운 시도를 통해 배우는 것을 좋아합니다.', careers: ['발명가', '벤처 사업가', '에이전트', '배우', '가수', '영화감독', '칼럼니스트', '정치인'] },
+    INFJ: { nick: '옹호자', desc: '통찰력이 있고 이상주의적이며, 타인을 돕고 의미 있는 목표를 추구하는 데 관심이 많습니다.', careers: ['직업상담사', '특수교사', '노인복지사', '아트 디렉터', '프리랜서 기획자', '저널리스트', '상품기획 MD'] },
+    INFP: { nick: '중재자', desc: '감성이 풍부하고 자신의 가치관을 소중히 여기며, 창의적인 방식으로 생각을 표현하는 것을 좋아합니다.', careers: ['예술가', '소설가', '시인', '음악가', '미술치료사', '사회복지사', '작곡가', '사서'] },
+    ENFJ: { nick: '선도자', desc: '따뜻하고 카리스마가 있으며, 사람들을 이끌고 성장을 돕는 데서 보람을 느낍니다.', careers: ['아나운서', '리포터', '방송 MC', '언어교사', '아동복지사', 'CEO', '취업 컨설턴트', '동시통역가'] },
+    ENFP: { nick: '활동가', desc: '열정적이고 사교적이며, 새로운 사람과 가능성을 탐구하는 것을 즐깁니다.', careers: ['크리에이티브 디렉터', '디자이너', '시나리오 작가', '방송 프로듀서', '홍보 컨설턴트', '상담사', '상품 기획자'] },
+    ISTJ: { nick: '현실주의자', desc: '책임감이 강하고 체계적이며, 원칙과 절차를 중시하며 꾸준히 맡은 일을 해냅니다.', careers: ['통계학자', '바이어', '기상학자', '법률연구원', '보험 심사관', '형사', '감정평가사', '세관조사관'] },
+    ISFJ: { nick: '수호자', desc: '헌신적이고 배려심이 많으며, 주변 사람들을 세심하게 챙기고 안정을 추구합니다.', careers: ['행정보조원', '인사관리자', '신용상담가', '보호감찰관', '물리치료사', '정신과의사', '방사선기사'] },
+    ESTJ: { nick: '경영자', desc: '실용적이고 조직적이며, 규율과 효율을 중시하고 계획을 실행에 옮기는 데 능합니다.', careers: ['감독관', '예산분석가', '은행장', '정책책임자', '보안요원', '기관사', '교육전문가'] },
+    ESFJ: { nick: '집정관', desc: '협조적이고 친화적이며, 공동체와 인간관계를 소중히 여기고 적극적으로 돕습니다.', careers: ['홍보책임자', '호텔지배인', '마케팅책임자', '초등학교교사', '특수교사', '비서', '유치원교사'] },
+    ISTP: { nick: '장인', desc: '실용적이고 손재주가 좋으며, 조용히 관찰하다가 문제가 생기면 즉각적으로 해결합니다.', careers: ['파일럿', '카레이서', '범죄학자', '사진작가', '판매원', '운동선수', '항공기정비사', '네트워크관리자'] },
+    ISFP: { nick: '모험가', desc: '온화하고 예술적 감각이 뛰어나며, 자신만의 방식으로 세상을 조용히 탐색합니다.', careers: ['보석세공사', '음향디자이너', '만화가', '지질학자', '사육사', '수의사', '법률비서', '약사'] },
+    ESTP: { nick: '사업가', desc: '활동적이고 현실적이며, 순발력이 뛰어나 즉흥적인 상황에도 잘 대응합니다.', careers: ['경찰관', '소방관', '군장교', '펀드매니저', '은행원', '기자', '여행가이드', '건축엔지니어'] },
+    ESFP: { nick: '연예인', desc: '활발하고 사교적이며, 주변 사람들과 즐거운 분위기를 만드는 것을 좋아합니다.', careers: ['코미디언', '의상디자이너', '일러스트레이터', '애니메이터', '여행상품기획자', '놀이치료사'] },
 };
 
 let selectedType = null;
@@ -412,7 +413,7 @@ function renderTypePicker() {
         <div class="type-group">
             <div class="type-group-title">${g.label} (${g.key})</div>
             <div class="type-grid">
-                ${g.types.map(t => `<button type="button" class="type-pick" data-type="${t}" data-g="${g.key}">${t}</button>`).join('')}
+                ${g.types.map(t => `<button type="button" class="type-pick" data-type="${t}" data-g="${g.key}">${t}<span class="nick">${MBTI_INFO[t].nick}</span></button>`).join('')}
             </div>
         </div>
     `).join('');
@@ -607,13 +608,14 @@ async function createSlides() {
         return;
     }
     const btn = document.getElementById('btnSlides');
+    const classFilter = document.getElementById('classFilter').value;
     btn.disabled = true;
     btn.textContent = '생성 중...';
     try {
         const res = await fetch(GAS_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'createSlides' }),
+            body: JSON.stringify({ action: 'createSlides', classFilter }),
         });
         const data = await res.json();
         if (!data.ok) throw new Error(data.error || '생성 실패');
