@@ -262,7 +262,8 @@ function addCareerSlides_(deck, label, scopeRows) {
       const l2End = l2Start + desc.length;
       const l3Start = l2End + 1;
 
-      const infoH = boxH * 0.58;
+      const nameBoxH = boxH * 0.22;
+      const infoH = boxH - nameBoxH - 4;
       const tb = slide.insertTextBox(infoText, x + 10, y + 8, boxW - 20, infoH - 12);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
@@ -270,17 +271,16 @@ function addCareerSlides_(deck, label, scopeRows) {
       range.getRange(l2Start, l2End).getTextStyle().setFontSize(15).setBold(false);
       range.getRange(l3Start, infoText.length).getTextStyle().setFontSize(14).setBold(false);
 
-      // 학생 이름은 눈에 띄도록 청남색 박스 + 노란 테두리 + 노란 글씨로 별도 강조
+      // 학생 이름은 아래쪽에 작은 띠로 살짝 넣어서, 위 설명 영역을 가리지 않게 함
       const names = scopeRows.filter(r => r.mbti === item.t).map(r => r.name);
       const namesText = names.length ? names.join(', ') : '(제출자 없음)';
-      const nameBoxY = y + infoH;
-      const nameBoxH = boxH - infoH - 4;
+      const nameBoxY = y + infoH + 4;
       const nameBox = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x + 6, nameBoxY, boxW - 12, nameBoxH);
       nameBox.getFill().setSolidFill('#1B2A56');
       nameBox.getBorder().setWeight(2);
       nameBox.getBorder().getLineFill().setSolidFill('#FFEB3B');
-      const nameTb = slide.insertTextBox(namesText, x + 12, nameBoxY + 4, boxW - 24, nameBoxH - 8);
-      nameTb.getText().getTextStyle().setFontSize(21).setBold(true).setForegroundColor('#FFEB3B');
+      const nameTb = slide.insertTextBox(namesText, x + 10, nameBoxY + 2, boxW - 20, nameBoxH - 4);
+      nameTb.getText().getTextStyle().setFontSize(12).setBold(true).setForegroundColor('#FFEB3B');
       nameTb.getText().getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.CENTER);
     });
   });
