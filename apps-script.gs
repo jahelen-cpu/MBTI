@@ -13,6 +13,8 @@
 
 const SHEET_ID = 'PASTE_YOUR_SPREADSHEET_ID_HERE';
 const HEADER = ['제출시각', '반', '학번', '이름', 'MBTI'];
+const ROSTER_SHEET_NAME = '전체명단';
+const ROSTER_HEADER = ['반', '번호', '이름'];
 
 function getSheet_() {
   const sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
@@ -33,6 +35,29 @@ function getAllRows_() {
       studentId: String(r[2]),
       name: String(r[3]),
       mbti: String(r[4]),
+    }));
+}
+
+// 반별 전체 학생 명단 시트 (미제출자 확인용). 없으면 헤더만 있는 빈 시트를 만들어둔다.
+function getRosterSheet_() {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  let sheet = ss.getSheetByName(ROSTER_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(ROSTER_SHEET_NAME);
+    sheet.appendRow(ROSTER_HEADER);
+  }
+  return sheet;
+}
+
+function getAllRoster_() {
+  const sheet = getRosterSheet_();
+  const values = sheet.getDataRange().getValues();
+  return values.slice(1)
+    .filter(r => r[1])
+    .map(r => ({
+      classNum: String(r[0]),
+      studentId: String(r[1]),
+      name: String(r[2]),
     }));
 }
 
@@ -77,7 +102,7 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return jsonOutput_({ ok: true, rows: getAllRows_() });
+  return jsonOutput_({ ok: true, rows: getAllRows_(), roster: getAllRoster_() });
 }
 
 function jsonOutput_(obj) {
