@@ -164,35 +164,13 @@ function addSummarySlide_(deck, label, scopeRows) {
   });
 }
 
-// 유형별 학생 이름 명단 슬라이드 (학번 제외, 이름만 큰 글씨로 표시)
-function addStudentListSlide_(deck, label, scopeRows) {
-  const slide = deck.appendSlide(SlidesApp.PredefinedLayout.BLANK);
-  addSlideHeader_(slide, `${label} 학생 명단`);
-
-  const allTypes = TYPE_GROUPS_.reduce((acc, g) => acc.concat(g.types.map(t => ({ t: t, color: g.color }))), []);
-  allTypes.forEach((item, i) => {
-    const col = i % 2;
-    const row = Math.floor(i / 2);
-    const x = 20 + col * 470;
-    const y = 70 + row * 60;
-    const names = scopeRows.filter(r => r.mbti === item.t).map(r => r.name);
-    const label2 = `${TYPE_EMOJI_[item.t]} ${item.t} (${names.length}명) `;
-    const namesText = names.length ? names.join(', ') : '-';
-    const text = label2 + namesText;
-    const tb = slide.insertTextBox(text, x, y, 455, 56);
-    const range = tb.getText();
-    range.getTextStyle().setFontSize(18).setBold(true).setForegroundColor('#1C2B1C');
-    range.getRange(0, label2.length).getTextStyle().setFontSize(13).setForegroundColor(item.color);
-  });
-}
-
-// 유형별 어울리는 직업 참고 슬라이드 (반과 무관한 고정 참고 정보, 2장으로 분할)
-function addCareerReferenceSlides_(deck) {
+// 유형별 어울리는 직업 + 학생 이름 슬라이드 (반 단위로 2장씩 생성)
+function addCareerSlides_(deck, label, scopeRows) {
   const allTypes = TYPE_GROUPS_.reduce((acc, g) => acc.concat(g.types.map(t => ({ t: t, color: g.color }))), []);
   const chunks = [allTypes.slice(0, 8), allTypes.slice(8, 16)];
   chunks.forEach((chunk, idx) => {
     const slide = deck.appendSlide(SlidesApp.PredefinedLayout.BLANK);
-    addSlideHeader_(slide, `유형별 어울리는 직업 (${idx + 1}/2)`);
+    addSlideHeader_(slide, `${label} · 유형별 어울리는 직업 (${idx + 1}/2)`);
 
     chunk.forEach((item, i) => {
       const col = i % 2;
@@ -202,14 +180,23 @@ function addCareerReferenceSlides_(deck) {
       const box = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x, y, 455, 105);
       box.getFill().setSolidFill(item.color);
       box.getBorder().setTransparent();
+
       const title = `${TYPE_EMOJI_[item.t]} ${item.t} · ${TYPE_NICK_[item.t]}`;
-      const jobs = (TYPE_CAREERS_[item.t] || []).join(', ');
-      const text = `${title}\n${jobs}`;
-      const tb = slide.insertTextBox(text, x + 10, y + 6, 435, 93);
+      const jobs = (TYPE_CAREERS_[item.t] || []).join(' · ');
+      const names = scopeRows.filter(r => r.mbti === item.t).map(r => r.name);
+      const namesText = names.length ? names.join(', ') : '(제출자 없음)';
+      const text = `${title}\n${jobs}\n${namesText}`;
+
+      const l2Start = title.length + 1;
+      const l2End = l2Start + jobs.length;
+      const l3Start = l2End + 1;
+
+      const tb = slide.insertTextBox(text, x + 8, y + 4, 439, 97);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
-      range.getRange(0, title.length).getTextStyle().setFontSize(16).setBold(true);
-      range.getRange(title.length + 1, text.length).getTextStyle().setFontSize(12).setBold(false);
+      range.getRange(0, title.length).getTextStyle().setFontSize(14).setBold(true);
+      range.getRange(l2Start, l2End).getTextStyle().setFontSize(9).setBold(false);
+      range.getRange(l3Start, text.length).getTextStyle().setFontSize(13).setBold(true);
     });
   });
 }
@@ -218,27 +205,26 @@ function createSlidesDeck_(rows, classFilter) {
   const deck = SlidesApp.create('MBTI 조사 결과 - ' + Utilities.formatDate(new Date(), 'GMT+9', 'yyyy.MM.dd'));
   const titleSlide = deck.getSlides()[0];
   titleSlide.getShapes().forEach(sh => { try { sh.remove(); } catch (err) {} });
-  titleSlide.insertTextBox('🧭 우리 반 MBTI 조사 결과', 40, 150, 880, 70)
+  const titleText = (classFilter && classFilter !== 'all') ? `🧭 우리 ${classFilter}반 MBTI 조사 결과` : '🧭 우리 반 MBTI 조사 결과 (전체 학급)';
+  titleSlide.insertTextBox(titleText, 40, 150, 880, 70)
     .getText().getTextStyle().setFontSize(36).setBold(true);
   titleSlide.insertTextBox(`총 ${rows.length}명 응답`, 40, 230, 880, 40)
     .getText().getTextStyle().setFontSize(18).setForegroundColor('#5A705A');
   titleSlide.insertTextBox('⚠️ MBTI는 성격을 이해하는 참고 자료일 뿐, 사람을 규정짓는 절대적인 기준이 아닙니다. 검사 시점과 상황에 따라 얼마든지 변할 수 있어요.', 40, 300, 880, 90)
     .getText().getTextStyle().setFontSize(14).setBold(true).setForegroundColor('#8A6D00');
 
-  addCareerReferenceSlides_(deck);
-
   if (!classFilter || classFilter === 'all') {
     for (let c = 1; c <= 8; c++) {
       const classNum = String(c);
       const scopeRows = rows.filter(r => r.classNum === classNum);
       addSummarySlide_(deck, `${c}반`, scopeRows);
-      addStudentListSlide_(deck, `${c}반`, scopeRows);
+      addCareerSlides_(deck, `${c}반`, scopeRows);
     }
     addSummarySlide_(deck, '전체 학급 합계', rows);
   } else {
     const scopeRows = rows.filter(r => r.classNum === classFilter);
     addSummarySlide_(deck, `${classFilter}반`, scopeRows);
-    addStudentListSlide_(deck, `${classFilter}반`, scopeRows);
+    addCareerSlides_(deck, `${classFilter}반`, scopeRows);
   }
 
   return deck.getUrl();
