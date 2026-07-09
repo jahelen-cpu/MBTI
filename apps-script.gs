@@ -256,23 +256,32 @@ function addCareerSlides_(deck, label, scopeRows) {
       const title = `${TYPE_EMOJI_[item.t]} ${item.t} · ${TYPE_NICK_[item.t]}`;
       const desc = TYPE_DESC_[item.t] || '';
       const jobs = (TYPE_CAREERS_[item.t] || []).join(' · ');
-      const names = scopeRows.filter(r => r.mbti === item.t).map(r => r.name);
-      const namesText = names.length ? names.join(', ') : '(제출자 없음)';
-      const text = `${title}\n${desc}\n${jobs}\n${namesText}`;
+      const infoText = `${title}\n${desc}\n${jobs}`;
 
       const l2Start = title.length + 1;
       const l2End = l2Start + desc.length;
       const l3Start = l2End + 1;
-      const l3End = l3Start + jobs.length;
-      const l4Start = l3End + 1;
 
-      const tb = slide.insertTextBox(text, x + 10, y + 8, boxW - 20, boxH - 16);
+      const infoH = boxH * 0.58;
+      const tb = slide.insertTextBox(infoText, x + 10, y + 8, boxW - 20, infoH - 12);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
       range.getRange(0, title.length).getTextStyle().setFontSize(24).setBold(true);
       range.getRange(l2Start, l2End).getTextStyle().setFontSize(15).setBold(false);
-      range.getRange(l3Start, l3End).getTextStyle().setFontSize(14).setBold(false);
-      range.getRange(l4Start, text.length).getTextStyle().setFontSize(21).setBold(true);
+      range.getRange(l3Start, infoText.length).getTextStyle().setFontSize(14).setBold(false);
+
+      // 학생 이름은 눈에 띄도록 청남색 박스 + 노란 테두리 + 노란 글씨로 별도 강조
+      const names = scopeRows.filter(r => r.mbti === item.t).map(r => r.name);
+      const namesText = names.length ? names.join(', ') : '(제출자 없음)';
+      const nameBoxY = y + infoH;
+      const nameBoxH = boxH - infoH - 4;
+      const nameBox = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x + 6, nameBoxY, boxW - 12, nameBoxH);
+      nameBox.getFill().setSolidFill('#1B2A56');
+      nameBox.getBorder().setWeight(2);
+      nameBox.getBorder().getLineFill().setSolidFill('#FFEB3B');
+      const nameTb = slide.insertTextBox(namesText, x + 12, nameBoxY + 4, boxW - 24, nameBoxH - 8);
+      nameTb.getText().getTextStyle().setFontSize(21).setBold(true).setForegroundColor('#FFEB3B');
+      nameTb.getText().getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.CENTER);
     });
   });
 }
