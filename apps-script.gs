@@ -204,24 +204,27 @@ function addSummarySlide_(deck, label, scopeRows) {
   });
 }
 
-// 유형별 어울리는 직업 + 학생 이름 슬라이드 (반 단위로 2장씩 생성, 페이지 실제 폭에 맞춰 2열 배치)
+// 유형별 어울리는 직업 + 학생 이름 슬라이드 (반 단위로 4장씩, 한 장에 4개 유형만 크게 배치)
 function addCareerSlides_(deck, label, scopeRows) {
   const pw = deck.getPageWidth();
   const ph = deck.getPageHeight();
   const headerHeight = 36;
   const margin = 8;
-  const gap = 5;
+  const gap = 8;
   const cols = 2;
-  const rows = 4;
+  const rows = 2;
   const boxW = (pw - margin * 2 - gap * (cols - 1)) / cols;
   const top = headerHeight + 6;
   const boxH = (ph - top - margin - gap * (rows - 1)) / rows;
 
   const allTypes = TYPE_GROUPS_.reduce((acc, g) => acc.concat(g.types.map(t => ({ t: t, color: g.color }))), []);
-  const chunks = [allTypes.slice(0, 8), allTypes.slice(8, 16)];
+  const chunkSize = 4;
+  const chunks = [];
+  for (let i = 0; i < allTypes.length; i += chunkSize) chunks.push(allTypes.slice(i, i + chunkSize));
+
   chunks.forEach((chunk, idx) => {
     const slide = deck.appendSlide(SlidesApp.PredefinedLayout.BLANK);
-    addSlideHeader_(slide, `${label} · 유형별 어울리는 직업 (${idx + 1}/2)`, pw);
+    addSlideHeader_(slide, `${label} · 유형별 어울리는 직업 (${idx + 1}/${chunks.length})`, pw);
 
     chunk.forEach((item, i) => {
       const col = i % cols;
@@ -242,12 +245,12 @@ function addCareerSlides_(deck, label, scopeRows) {
       const l2End = l2Start + jobs.length;
       const l3Start = l2End + 1;
 
-      const tb = slide.insertTextBox(text, x + 5, y + 2, boxW - 10, boxH - 4);
+      const tb = slide.insertTextBox(text, x + 10, y + 8, boxW - 20, boxH - 16);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
-      range.getRange(0, title.length).getTextStyle().setFontSize(11).setBold(true);
-      range.getRange(l2Start, l2End).getTextStyle().setFontSize(7).setBold(false);
-      range.getRange(l3Start, text.length).getTextStyle().setFontSize(10).setBold(true);
+      range.getRange(0, title.length).getTextStyle().setFontSize(18).setBold(true);
+      range.getRange(l2Start, l2End).getTextStyle().setFontSize(11).setBold(false);
+      range.getRange(l3Start, text.length).getTextStyle().setFontSize(16).setBold(true);
     });
   });
 }
