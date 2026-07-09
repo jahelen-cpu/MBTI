@@ -132,52 +132,78 @@ function countsFor_(rows, filterFn) {
   return counts;
 }
 
-function addSlideHeader_(slide, title) {
-  slide.insertShape(SlidesApp.ShapeType.RECTANGLE, 0, 0, 960, 55).getFill().setSolidFill('#2E7D32');
-  slide.insertTextBox(title, 20, 8, 800, 40)
-    .getText().getTextStyle().setFontSize(22).setBold(true).setForegroundColor('#FFFFFF');
+function addSlideHeader_(slide, title, pageWidth) {
+  const barHeight = 36;
+  slide.insertShape(SlidesApp.ShapeType.RECTANGLE, 0, 0, pageWidth, barHeight).getFill().setSolidFill('#2E7D32');
+  slide.insertTextBox(title, 12, 3, pageWidth - 24, barHeight - 6)
+    .getText().getTextStyle().setFontSize(13).setBold(true).setForegroundColor('#FFFFFF');
 }
 
-// 유형별 요약(명수) 슬라이드
+// 유형별 요약(명수+이름) 슬라이드 — 페이지 실제 폭에 맞춰 16개 박스를 한 화면에 배치
 function addSummarySlide_(deck, label, scopeRows) {
+  const pw = deck.getPageWidth();
+  const ph = deck.getPageHeight();
+  const headerHeight = 36;
+  const margin = 8;
+  const gap = 5;
+  const cols = 4;
+  const rows = 4;
+  const boxW = (pw - margin * 2 - gap * (cols - 1)) / cols;
+  const top = headerHeight + 6;
+  const boxH = (ph - top - margin - gap * (rows - 1)) / rows;
+
   const slide = deck.appendSlide(SlidesApp.PredefinedLayout.BLANK);
-  addSlideHeader_(slide, `${label}  ·  총 ${scopeRows.length}명`);
+  addSlideHeader_(slide, `${label}  ·  총 ${scopeRows.length}명`, pw);
   const counts = countsFor_(scopeRows, () => true);
 
   TYPE_GROUPS_.forEach((g, gi) => {
     g.types.forEach((t, ti) => {
-      const x = 20 + ti * 235;
-      const y = 70 + gi * 115;
-      const box = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x, y, 225, 105);
+      const x = margin + ti * (boxW + gap);
+      const y = top + gi * (boxH + gap);
+      const box = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x, y, boxW, boxH);
       box.getFill().setSolidFill(g.color);
       box.getBorder().setTransparent();
-      const title = `${TYPE_EMOJI_[t]} ${t} · ${TYPE_NICK_[t]}`;
-      const countLine = `${counts[t]}명`;
-      const text = `${title}\n${countLine}`;
-      const tb = slide.insertTextBox(text, x + 6, y + 6, 213, 93);
+
+      const names = scopeRows.filter(r => r.mbti === t).map(r => r.name);
+      const namesText = names.length ? names.join(', ') : '-';
+      const title = `${TYPE_EMOJI_[t]} ${t} (${counts[t]}명)`;
+      const text = `${title}\n${namesText}`;
+
+      const tb = slide.insertTextBox(text, x + 3, y + 2, boxW - 6, boxH - 4);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF').setBold(true);
-      range.getRange(0, title.length).getTextStyle().setFontSize(15);
-      range.getRange(title.length + 1, text.length).getTextStyle().setFontSize(24);
+      range.getRange(0, title.length).getTextStyle().setFontSize(9);
+      range.getRange(title.length + 1, text.length).getTextStyle().setFontSize(7).setBold(false);
       range.getParagraphStyle().setParagraphAlignment(SlidesApp.ParagraphAlignment.CENTER);
     });
   });
 }
 
-// 유형별 어울리는 직업 + 학생 이름 슬라이드 (반 단위로 2장씩 생성)
+// 유형별 어울리는 직업 + 학생 이름 슬라이드 (반 단위로 2장씩 생성, 페이지 실제 폭에 맞춰 2열 배치)
 function addCareerSlides_(deck, label, scopeRows) {
+  const pw = deck.getPageWidth();
+  const ph = deck.getPageHeight();
+  const headerHeight = 36;
+  const margin = 8;
+  const gap = 5;
+  const cols = 2;
+  const rows = 4;
+  const boxW = (pw - margin * 2 - gap * (cols - 1)) / cols;
+  const top = headerHeight + 6;
+  const boxH = (ph - top - margin - gap * (rows - 1)) / rows;
+
   const allTypes = TYPE_GROUPS_.reduce((acc, g) => acc.concat(g.types.map(t => ({ t: t, color: g.color }))), []);
   const chunks = [allTypes.slice(0, 8), allTypes.slice(8, 16)];
   chunks.forEach((chunk, idx) => {
     const slide = deck.appendSlide(SlidesApp.PredefinedLayout.BLANK);
-    addSlideHeader_(slide, `${label} · 유형별 어울리는 직업 (${idx + 1}/2)`);
+    addSlideHeader_(slide, `${label} · 유형별 어울리는 직업 (${idx + 1}/2)`, pw);
 
     chunk.forEach((item, i) => {
-      const col = i % 2;
-      const row = Math.floor(i / 2);
-      const x = 20 + col * 470;
-      const y = 70 + row * 115;
-      const box = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x, y, 455, 105);
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const x = margin + col * (boxW + gap);
+      const y = top + row * (boxH + gap);
+      const box = slide.insertShape(SlidesApp.ShapeType.ROUND_RECTANGLE, x, y, boxW, boxH);
       box.getFill().setSolidFill(item.color);
       box.getBorder().setTransparent();
 
@@ -191,12 +217,12 @@ function addCareerSlides_(deck, label, scopeRows) {
       const l2End = l2Start + jobs.length;
       const l3Start = l2End + 1;
 
-      const tb = slide.insertTextBox(text, x + 8, y + 4, 439, 97);
+      const tb = slide.insertTextBox(text, x + 5, y + 2, boxW - 10, boxH - 4);
       const range = tb.getText();
       range.getTextStyle().setForegroundColor('#FFFFFF');
-      range.getRange(0, title.length).getTextStyle().setFontSize(14).setBold(true);
-      range.getRange(l2Start, l2End).getTextStyle().setFontSize(9).setBold(false);
-      range.getRange(l3Start, text.length).getTextStyle().setFontSize(13).setBold(true);
+      range.getRange(0, title.length).getTextStyle().setFontSize(11).setBold(true);
+      range.getRange(l2Start, l2End).getTextStyle().setFontSize(7).setBold(false);
+      range.getRange(l3Start, text.length).getTextStyle().setFontSize(10).setBold(true);
     });
   });
 }
